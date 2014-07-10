@@ -1,8 +1,13 @@
-#container {
+#wrapper {
     border: solid black 1px;
     position: absolute;
     top: 5px;
     bottom: 5px;
     left: 5px;
     right: 5px;
+}
+
+#box {
+    height: 100%;
+    width: 100%;
 }

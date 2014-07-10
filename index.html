@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <title>Ideal Gases</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script type="text/javascript" src="gases.js"></script>
 </head>
 <body>
-    <svg id="container" 
+    <!-- Without the wrapper div the svg element stretches all the way to the
+    end of the viewport for some reason -->
+    <div id="wrapper">
+    <svg id="box" 
          version="1.1"
          baseProfile="full"
          xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <script type="text/javascript" src="gases.js"></script>
 </body>
 </html>
