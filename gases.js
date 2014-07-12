@@ -48,7 +48,7 @@ var gases = (function() {
 
             this._htmlElem.appendChild(mol.svgElem());
         }
-        
+
     };
 
 
@@ -69,7 +69,11 @@ var gases = (function() {
 
 
     function Molecule(x, y, r) {
-        r = r || 10;
+        r = r || 10; // note this prevents r = 0
+
+        this._centre = new Point(x, y);
+        this._radius = r;
+
         this._svgElem = document.createElementNS(svgNS, 'circle');
         this._svgElem.setAttributeNS(null, "cx", x);
         this._svgElem.setAttributeNS(null, "cy", y);
@@ -84,17 +88,17 @@ var gases = (function() {
     };
 
     Molecule.prototype.getCentre = function () {
-        return new Point( Number(this._svgElem.getAttribute('cx')),
-                          Number(this._svgElem.getAttribute('cy')) );
+        return this._centre;
     };
 
     Molecule.prototype.setCentre = function (point) {
+        this._centre = point;
         this._svgElem.setAttribute("cx", point.x);
         this._svgElem.setAttribute("cy", point.y);
     };
 
     Molecule.prototype.getRadius = function() {
-        return Number(this._svgElem.getAttribute('r'));
+        return this._radius;
     };
 
     Molecule.prototype.collides = function(otherMol) {
@@ -121,9 +125,16 @@ var gases = (function() {
     }
 
     function Point(x, y) {
-        this.x = x;
-        this.y = y;
+        // note x and y properties are non-writeable
+        Object.defineProperty(this, 'x',
+                              { value: x, enumerable: true });
+        Object.defineProperty(this, 'y', 
+                              { value: y, enumerable: true });
     }
+
+    Point.prototype.add = function(otherPt) {
+        return Point(this.x + otherPt.x, this.y + otherPt.y);
+    };
 
     return {
 
