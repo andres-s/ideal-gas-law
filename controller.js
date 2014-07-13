@@ -15,12 +15,11 @@ var controller = (function () {
         if (boxModel)
             this._model = boxModel;
         else {
-            this._model = new SimpleGasBox(this._htmlElem.clientWidth, 
-                                           this._htmlElem.clientHeight);
-            // this._model = new RandomGasBox(this._htmlElem.clientWidth, 
-            //                                this._htmlElem.clientHeight,
-            //                                10, 10);
-            // extra initialisation maybe?
+            // this._model = new SimpleGasBox(this._htmlElem.clientWidth, 
+            //                                this._htmlElem.clientHeight);
+            this._model = new RandomGasBox(this._htmlElem.clientWidth, 
+                                           this._htmlElem.clientHeight,
+                                           10, 40);
         }
         this._circles = new CircleCollection(boxHTMLElem);
     }
@@ -33,6 +32,9 @@ var controller = (function () {
     };
 
     BoxController.prototype.advance = function(millisElapsed) {
+        this._model.setHeight(this.getDOMBoxHeight());
+        this._model.setWidth(this.getDOMBoxWidth());
+
         if (this._millisElapsed) {
             var delta = millisElapsed - this._millisElapsed;
             this._model.advance(delta);

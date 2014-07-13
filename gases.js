@@ -87,7 +87,8 @@ var gases = (function() {
         for (var i = 0; i < numMolecules; i++) {
 
             var pos = randomVector(widthRange, heightRange, moleculeRadius, moleculeRadius);
-            var mol = new Molecule(pos.x, pos.y, moleculeRadius);
+            var vel = randomVector(-0.7, -0.7, 0, 0);
+            var mol = new Molecule(pos.x, pos.y, moleculeRadius, vel.x, vel.y);
 
             while ( ! this._molecules.addMolecule(mol) ) {
                 mol.setCentre(
