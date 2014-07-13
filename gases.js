@@ -53,6 +53,10 @@ var gases = (function() {
         };
     };
 
+    GasBox.prototype.getMolecules = function() {
+        return this._molecules.getMolecules();
+    };
+
     GasBox.prototype._initialise = function(numMolecules, moleculeRadius) {
 
         var heightRange = this.height() - 2*moleculeRadius;
@@ -96,7 +100,7 @@ var gases = (function() {
     MoleculeCollection.prototype.getMolecules = function() {
         var ret = {};
         this._molecules.forEach(function (elem, idx) {
-            ret[idx] = elem;
+            ret[String(idx)] = elem;
         });
         return ret;
     };

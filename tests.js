@@ -118,17 +118,52 @@ QUnit.module('MoleculeCollection tests', {
         mol1 = new Molecule(0, 0, 1);
         mol2 = new Molecule(0, 1, 1);
         mol3 = new Molecule(3, 3, 2);
-        coll = new MoleculeCollection();
+        
+        collEmpty = new MoleculeCollection();
+        
+        collFull = new MoleculeCollection();
+        collFull.addMolecule(mol1);
+        collFull.addMolecule(mol3);
     }
 });
 
 QUnit.test('Add molecule test', function(assert) {
-    var firstAdd = coll.addMolecule(mol1);
+    var firstAdd = collEmpty.addMolecule(mol1);
     assert.strictEqual(firstAdd, true, "addMolecule didn't add");
-    var secondAdd = coll.addMolecule(mol2);
+    var secondAdd = collEmpty.addMolecule(mol2);
     assert.strictEqual(secondAdd, false, 'addMolecule bad');
-    var thirdAdd = coll.addMolecule(mol3);
+    var thirdAdd = collEmpty.addMolecule(mol3);
     assert.strictEqual(firstAdd, true, "addMolecule didn't add");
+});
+
+QUnit.test("getMolecules test", function (assert) {
+    var emptyMolecules = Object.keys(collEmpty.getMolecules());
+    assert.strictEqual(emptyMolecules.length, 0, 'should have no molecules');
+
+    function testMoleculeEquality(mol1, mol2) {
+        var c1 = mol1.getCentre();
+        var r1 = mol1.getRadius();
+        var v1 = mol1.getVelocity();
+        var c2 = mol2.getCentre();
+        var r2 = mol2.getRadius();
+        var v2 = mol2.getVelocity();
+        assert.strictEqual(c1.x, c2.x, '');
+        assert.strictEqual(c1.y, c2.y, '');
+        assert.strictEqual(v1.x, v2.x, '');
+        assert.strictEqual(v1.y, v2.y, '');
+        assert.strictEqual(r1, r2, '');
+    }
+
+    var fullMolecules = collFull.getMolecules();
+    var expected = {
+        '0': mol1,
+        '1': mol3
+    };
+    for (var prop in fullMolecules) {
+        if (Object.hasOwnProperty.call(fullMolecules, prop))
+            testMoleculeEquality(fullMolecules[prop], expected[prop]);
+    }
+    
 });
 
 

@@ -35,6 +35,7 @@ var controller = (function () {
         this._millisElapsed = millisElapsed;
 
         this._model.advance(delta);
+        var newState = this._model.getMolecules();
     };
 
     BoxController.prototype.getDOMBoxHeight = function() {
