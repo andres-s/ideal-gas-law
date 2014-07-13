@@ -12,18 +12,6 @@ var gases = (function() {
         return this;
     }
 
-    // function GasBox(htmlElem) {
-    //     this._htmlElem = htmlElem;
-    //     this._molecules = new MoleculeCollection();
-    //     return this;
-    // }
-
-    // function CreateRandomGasBox(htmlElem, numMolecules, moleculeRadius) {
-    //     var gasBox = new GasBox(htmlElem);
-    //     gasBox._initialise(numMolecules, moleculeRadius);
-    //     return gasBox;
-    // }
-
     GasBox.prototype.height = function() {
         return this._htmlElem.clientHeight;
     };
