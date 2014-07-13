@@ -30,19 +30,13 @@ var controller = (function () {
     };
 
     BoxController.prototype.advance = function(millisElapsed) {
-        if (!this._millisElapsed) {
+        if (this._millisElapsed) {
+            var delta = millisElapsed - this._millisElapsed;
             this._millisElapsed = millisElapsed;
-            var initState = this._model.getMolecules();
-            this._circles.update(initState);
-            return;
+            this._model.advance(delta);
         }
-
-        var delta = millisElapsed - this._millisElapsed;
-        this._millisElapsed = millisElapsed;
-
-        this._model.advance(delta);
-        var newState = this._model.getMolecules();
-        this._circles.update(newState);
+        var modelState = this._model.getMolecules();
+        this._circles.update(modelState);
     };
 
 
