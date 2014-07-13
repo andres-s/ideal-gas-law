@@ -102,16 +102,14 @@ var gases = (function() {
 
     function MoleculeCollection(box) {
         this._box = box;
-        this._molecules = []; // sparse array, if we delete molecules
+        this._molecules = []; // NOT sparse array, if we delete molecules
         return this;
     }
 
     // Returns true if addition was successful, false otherwise
     MoleculeCollection.prototype.addMolecule = function(molecule) {
-        for (var i = 0; i < this._molecules.length; i++)
-            if (this._molecules[i].collides(molecule))
-                return false;
-        
+        if (this._getCollider(molecule) !== null)
+            return false;
 
         this._molecules.push(molecule);
         return true;
@@ -132,6 +130,23 @@ var gases = (function() {
             mol.advance(timeDeltaMillis);
             self._box.bounce(mol);
         });
+    };
+
+    MoleculeCollection.prototype._getCollider = function(molOrMolId) {
+        var mol, molId;
+        if (typeof(molOrMolId) !== 'object') {
+            molId = Number(molOrMolId);
+            mol = this._molecules[molId];
+        } else {
+            molId = -1;
+            mol = molOrMolId;
+        }
+
+        for (var i = 0; i < this._molecules.length; i++)
+            if (molId !== i && this._molecules[i].collides(mol))
+                return this._molecules[i];
+        
+        return null;
     };
 
 
@@ -191,10 +206,29 @@ var gases = (function() {
     };
 
     Molecule.prototype._centreDistSqrd = function(otherMol) {
-        var thisCentre = this.getCentre();
-        var otherCentre = otherMol.getCentre();
+        var thisCentre = this.getCentre(),
+            otherCentre = otherMol.getCentre();
         return Math.pow((thisCentre.x - otherCentre.x), 2) + 
                Math.pow((thisCentre.y - otherCentre.y), 2);
+    };
+
+    Molecule.prototype._backtrackToContact = function(mol) {
+        
+        var thisCentre = this.getCentre(),
+            molCentre = mol.getCentre(),
+            thisVel = this.getVelocity();
+        var r1 = this.getRadius(),
+            r2 = mol.getRadius(),
+            x = thisCentre.x,
+            y = thisCentre.y,
+            a = molCentre.x,
+            b = molCentre.y,
+            u = thisVel.x,
+            v = thisVel.y,
+            surd = Math.pow((a-x+b-y), 2) + 
+                   (u*u + v*v)*((r1+r2)*(r1+r2) - (a-x)*(a-x) - (b-y)*(b-y)),
+            numerator = x-a+y-b + Math.sqrt(surd);
+        return numerator / (u*u + v*v);
     };
 
     function randomVector(xrange, yrange, xoffset, yoffset) {
@@ -218,6 +252,15 @@ var gases = (function() {
     Vector.prototype.add = function(otherPt) {
         return new Vector(this.x + otherPt.x, this.y + otherPt.y);
     };
+
+    Vector.prototype.mult = function(scalar) {
+        return new Vector(scalar * this.x, scalar * this.y);
+    };
+
+    Vector.prototype.innerProd = function(otherVec) {
+        return this.x*otherVec.x + this.y*otherVec.y;
+    };
+
 
     return {
 

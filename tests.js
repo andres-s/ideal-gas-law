@@ -58,6 +58,16 @@ QUnit.test('Collision test', function( assert ) {
     assert.ok(!mol1.collides(mol3), 'Collision 2 false positive');
 });
 
+QUnit.test("Backtrack to contact test", function (assert) {
+    var mol1 = new Molecule(1, 0, 1, 1, 0);
+    var mol2 = new Molecule(2, 0, 1, 0, 0);
+    assert.strictEqual(mol1._backtrackToContact(mol2), 1, '');
+
+    var mol3 = new Molecule(0, 1, 1, 0, 1);
+    var mol4 = new Molecule(0, 2, 1, 0, 0);
+    assert.strictEqual(mol3._backtrackToContact(mol4), 1, '');
+});
+
 
 QUnit.module('Molecule movement tests', {
     setup: function() {
@@ -167,6 +177,13 @@ QUnit.test("getMolecules test", function (assert) {
             testMoleculeEquality(assert, fullMolecules[prop], expected[prop]);
     }
     
+});
+
+QUnit.test("getCollider test", function (assert) {
+    assert.strictEqual(collEmpty._getCollider(mol1), null, '');
+    collEmpty.addMolecule(mol1);
+    var colliderMol = collEmpty._getCollider(mol2);
+    testMoleculeEquality(assert, mol1, colliderMol);
 });
 
 
