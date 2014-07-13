@@ -5,21 +5,36 @@ var gases = (function() {
 
     var svgNS = "http://www.w3.org/2000/svg";
 
-    function GasBox(htmlElem, numMolecules, moleculeRadius) {
-        this._htmlElem = htmlElem;
+    function RandomGasBox(width, height, numMolecules, moleculeRadius) {
+        var gasBox = new GasBox(width, height);
+        gasBox._initialise(numMolecules, moleculeRadius);
+        return gasBox;
+    }
+
+    function GasBox(width, height) {
+        this._height = height;
+        this._width = width;
         this._molecules = new MoleculeCollection(this);
-        this._initialise(numMolecules, moleculeRadius);
         return this;
     }
 
     GasBox.prototype.height = function() {
-        return this._htmlElem.clientHeight;
+        return this._height;
     };
 
     GasBox.prototype.width = function() {
-        return this._htmlElem.clientWidth;
+        return this._width;
     };
 
+    GasBox.prototype.setHeight = function(h) {
+        this._height = h;
+        return this;
+    };
+
+    GasBox.prototype.setWidth = function(w) {
+        this._width = w;
+        return this;
+    };
 
     GasBox.prototype.advance = function(timeDeltaMillis) {
         this._molecules.advance(timeDeltaMillis);
@@ -72,8 +87,6 @@ var gases = (function() {
                     randomVector(widthRange, heightRange, 
                                 moleculeRadius, moleculeRadius));
             }
-
-            //this._htmlElem.appendChild(mol.svgElem());
         }
 
     };
@@ -130,18 +143,8 @@ var gases = (function() {
         this._radius = r;
         this._velocity = new Vector(vx, vy);
 
-        this._svgElem = document.createElementNS(svgNS, 'circle');
-        this._svgElem.setAttributeNS(null, "cx", x);
-        this._svgElem.setAttributeNS(null, "cy", y);
-        this._svgElem.setAttributeNS(null, "r", r);
-        this._svgElem.setAttributeNS(null, "fill", "black");
-        this._svgElem.setAttributeNS(null, "stroke", "none");
         return this;
     }
-
-    Molecule.prototype.svgElem = function () {
-        return this._svgElem;
-    };
 
     Molecule.prototype.getCentre = function () {
         return this._centre;
@@ -149,8 +152,6 @@ var gases = (function() {
 
     Molecule.prototype.setCentre = function (vec) {
         this._centre = vec;
-        this._svgElem.setAttribute("cx", vec.x);
-        this._svgElem.setAttribute("cy", vec.y);
         return this;
     };
 
@@ -212,6 +213,7 @@ var gases = (function() {
     return {
 
         GasBox: GasBox,
+        RandomGasBox: RandomGasBox,
 
         Vector: Vector,
 

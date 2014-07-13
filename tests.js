@@ -1,4 +1,5 @@
 var Vector = gases.Vector;
+var GasBox = gases.GasBox;
 var internalFuncs = gases.exposedforTESTINGONLY;
 var Molecule = internalFuncs.Molecule;
 var MoleculeCollection = internalFuncs.MoleculeCollection;
@@ -137,23 +138,24 @@ QUnit.test('Add molecule test', function(assert) {
     assert.strictEqual(firstAdd, true, "addMolecule didn't add");
 });
 
+
+function testMoleculeEquality(assert, mol1, mol2) {
+    var c1 = mol1.getCentre();
+    var r1 = mol1.getRadius();
+    var v1 = mol1.getVelocity();
+    var c2 = mol2.getCentre();
+    var r2 = mol2.getRadius();
+    var v2 = mol2.getVelocity();
+    assert.strictEqual(c1.x, c2.x, 'x-coord of centre bad');
+    assert.strictEqual(c1.y, c2.y, 'y-coord of centre bad');
+    assert.strictEqual(v1.x, v2.x, 'x-coord of velocity bad');
+    assert.strictEqual(v1.y, v2.y, 'y-coord of velocity bad');
+    assert.strictEqual(r1, r2, 'radius bad');
+}
+
 QUnit.test("getMolecules test", function (assert) {
     var emptyMolecules = Object.keys(collEmpty.getMolecules());
     assert.strictEqual(emptyMolecules.length, 0, 'should have no molecules');
-
-    function testMoleculeEquality(mol1, mol2) {
-        var c1 = mol1.getCentre();
-        var r1 = mol1.getRadius();
-        var v1 = mol1.getVelocity();
-        var c2 = mol2.getCentre();
-        var r2 = mol2.getRadius();
-        var v2 = mol2.getVelocity();
-        assert.strictEqual(c1.x, c2.x, '');
-        assert.strictEqual(c1.y, c2.y, '');
-        assert.strictEqual(v1.x, v2.x, '');
-        assert.strictEqual(v1.y, v2.y, '');
-        assert.strictEqual(r1, r2, '');
-    }
 
     var fullMolecules = collFull.getMolecules();
     var expected = {
@@ -162,7 +164,7 @@ QUnit.test("getMolecules test", function (assert) {
     };
     for (var prop in fullMolecules) {
         if (Object.hasOwnProperty.call(fullMolecules, prop))
-            testMoleculeEquality(fullMolecules[prop], expected[prop]);
+            testMoleculeEquality(assert, fullMolecules[prop], expected[prop]);
     }
     
 });
@@ -171,10 +173,48 @@ QUnit.test("getMolecules test", function (assert) {
 /*************************************
  * GasBox Unit Tests
  *************************************/
-// QUnit.module("GasBox tests", {
-//     setup: function() {
-//         box = new GasBox()
-//         mol1 = new Molecule(2, 2, 1, -5, 0);
-//         mol2 = new Molecule(2, 2, 1, -5, 0);)
-//     }
-// });
+QUnit.module("GasBox tests", {
+    setup: function() {
+        box = new GasBox(10, 10, 0, 1);
+        mol0 = new Molecule(5, 5, 1, 0, 0);
+        mol1 = new Molecule(-1, 5, 1, -1, 0);
+        mol2 = new Molecule(5, -1, 1, 0, -1);
+        mol3 = new Molecule(9.5, 5, 1, 1, 0);
+        mol4 = new Molecule(5, 9.5, 1, 0, 1);
+    }
+});
+
+QUnit.test("bounce1D test", function (assert) {
+    var bounced = box._bounce1D(10, 20, 4, -5);
+    assert.strictEqual(bounced.pos, 16);
+    assert.strictEqual(bounced.vel, 5);
+
+    bounced = box._bounce1D(-2, 1, 0, -5);
+    assert.strictEqual(bounced.pos, 0);
+    assert.strictEqual(bounced.vel, -5);
+});
+
+QUnit.test("bounce test", function (assert) {
+    box.bounce(mol0);
+    var expected = new Molecule(5, 5, 1, 0, 0);
+    testMoleculeEquality(assert, mol0, expected);
+
+    box.bounce(mol1);
+    expected = new Molecule(3, 5, 1, 1, 0);
+    testMoleculeEquality(assert, mol1, expected);
+
+    box.bounce(mol2);
+    expected = new Molecule(5, 3, 1, 0, 1);
+    testMoleculeEquality(assert, mol2, expected);
+
+    box.bounce(mol3);
+    expected = new Molecule(8.5, 5, 1, -1, 0);
+    testMoleculeEquality(assert, mol3, expected);
+
+    box.bounce(mol4);
+    expected = new Molecule(5, 8.5, 1, 0, -1);
+    testMoleculeEquality(assert, mol4, expected);
+});
+
+
+

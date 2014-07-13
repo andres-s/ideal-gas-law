@@ -6,6 +6,7 @@ var controller = (function () {
     var svgNS = "http://www.w3.org/2000/svg";
 
     var GasBox = gases.GasBox;
+    var RandomGasBox = gases.RandomGasBox;
     var Vector = gases.Vector;
 
     function BoxController (boxHTMLElem, boxModel) {
@@ -13,7 +14,9 @@ var controller = (function () {
         if (boxModel)
             this._model = boxModel;
         else {
-            this._model = new GasBox(this._htmlElem, 1, 10);
+            this._model = new RandomGasBox(this._htmlElem.clientWidth, 
+                                           this._htmlElem.clientHeight,
+                                           10, 10);
             // extra initialisation maybe?
         }
         this._circles = new CircleCollection(boxHTMLElem);
