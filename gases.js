@@ -73,7 +73,7 @@ var gases = (function() {
                                 moleculeRadius, moleculeRadius));
             }
 
-            this._htmlElem.appendChild(mol.svgElem());
+            //this._htmlElem.appendChild(mol.svgElem());
         }
 
     };
@@ -147,10 +147,10 @@ var gases = (function() {
         return this._centre;
     };
 
-    Molecule.prototype.setCentre = function (point) {
-        this._centre = point;
-        this._svgElem.setAttribute("cx", point.x);
-        this._svgElem.setAttribute("cy", point.y);
+    Molecule.prototype.setCentre = function (vec) {
+        this._centre = vec;
+        this._svgElem.setAttribute("cx", vec.x);
+        this._svgElem.setAttribute("cy", vec.y);
         return this;
     };
 
@@ -213,8 +213,9 @@ var gases = (function() {
 
         GasBox: GasBox,
 
+        Vector: Vector,
+
         exposedforTESTINGONLY: {
-            Vector: Vector,
             Molecule: Molecule,
             MoleculeCollection: MoleculeCollection
         }

@@ -11,6 +11,8 @@
         window.requestAnimationFrame(animateWrapper);
     }
 
-    window.requestAnimationFrame(animateWrapper);
+    boxController.advance(0);
+
+    //window.requestAnimationFrame(animateWrapper);
     
 })();

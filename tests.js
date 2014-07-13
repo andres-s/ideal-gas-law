@@ -1,7 +1,8 @@
+var Vector = gases.Vector;
 var internalFuncs = gases.exposedforTESTINGONLY;
 var Molecule = internalFuncs.Molecule;
 var MoleculeCollection = internalFuncs.MoleculeCollection;
-var Vector = internalFuncs.Vector;
+
 
 
 /*************************************
