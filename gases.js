@@ -7,7 +7,7 @@ var gases = (function() {
 
     function GasBox(htmlElem, numMolecules, moleculeRadius) {
         this._htmlElem = htmlElem;
-        this._molecules = new MoleculeCollection();
+        this._molecules = new MoleculeCollection(this);
         this._initialise(numMolecules, moleculeRadius);
         return this;
     }
@@ -20,6 +20,39 @@ var gases = (function() {
         return this._htmlElem.clientWidth;
     };
 
+
+    GasBox.prototype.advance = function(timeDeltaMillis) {
+        this._molecules.advance(timeDeltaMillis);
+    };
+
+    GasBox.prototype.bounce = function(mol) {
+        var molCentre = mol.getCentre();
+        var molRadius = mol.getRadius();
+        var molVel = mol.getVelocity();
+        var xCentreMax = this.width() - molRadius;
+        var yCentreMax = this.height() - molRadius;
+        var xBounced = this._bounce1D(molRadius, xCentreMax, 
+                                      molCentre.x, molVel.x);
+        var yBounced = this._bounce1D(molRadius, yCentreMax, 
+                                      molCentre.y, molVel.y);
+        mol.setCentre(new Vector(xBounced.pos, yBounced.pos));
+        mol.setVelocity(new Vector(xBounced.vel, yBounced.vel));
+    };
+
+    GasBox.prototype._bounce1D = function(min, max, pos, vel) {
+        if (pos < min) {
+            pos += 2 * (min - pos);
+            vel *= -1;
+        } else if (pos > max) {
+            pos -= 2 * (pos - max);
+            vel *= -1;
+        }
+        return {
+            pos: pos,
+            vel: vel
+        };
+    };
+
     GasBox.prototype._initialise = function(numMolecules, moleculeRadius) {
 
         var heightRange = this.height() - 2*moleculeRadius;
@@ -27,12 +60,12 @@ var gases = (function() {
         
         for (var i = 0; i < numMolecules; i++) {
 
-            var pos = randomPoint(widthRange, heightRange, moleculeRadius, moleculeRadius);
+            var pos = randomVector(widthRange, heightRange, moleculeRadius, moleculeRadius);
             var mol = new Molecule(pos.x, pos.y, moleculeRadius);
 
             while ( ! this._molecules.addMolecule(mol) ) {
                 mol.setCentre(
-                    randomPoint(widthRange, heightRange, 
+                    randomVector(widthRange, heightRange, 
                                 moleculeRadius, moleculeRadius));
             }
 
@@ -42,7 +75,8 @@ var gases = (function() {
     };
 
 
-    function MoleculeCollection() {
+    function MoleculeCollection(box) {
+        this._box = box;
         this._molecules = []; // sparse array, if we delete molecules
         return this;
     }
@@ -67,11 +101,30 @@ var gases = (function() {
         return ret;
     };
 
-    function Molecule(x, y, r) {
-        r = r || 10; // note this prevents r = 0
+    MoleculeCollection.prototype.advance = function(timeDeltaMillis) {
+        this._molecules.map(function (mol) {
+            mol.advance(timeDeltaMillis);
+            this._box.bounce(mol);
+        });
+    };
 
-        this._centre = new Point(x, y);
+
+    /**
+     * Model of a circular gas molecule
+     * @param {Number} x  pixels from left
+     * @param {Number} y  pixels from top
+     * @param {Number} r  radius of molecule
+     * @param {Number} vx x-velocity in pixels/millisecond
+     * @param {Number} vy y-velocity in pixels/millisecond
+     */
+    function Molecule(x, y, r, vx, vy) {
+        r = r || 10; // note this prevents r = 0
+        vx = vx || 0;
+        vy = vy || 0;
+
+        this._centre = new Vector(x, y);
         this._radius = r;
+        this._velocity = new Vector(vx, vy);
 
         this._svgElem = document.createElementNS(svgNS, 'circle');
         this._svgElem.setAttributeNS(null, "cx", x);
@@ -94,10 +147,27 @@ var gases = (function() {
         this._centre = point;
         this._svgElem.setAttribute("cx", point.x);
         this._svgElem.setAttribute("cy", point.y);
+        return this;
+    };
+
+    Molecule.prototype.getVelocity = function() {
+        return this._velocity;
+    };
+
+    Molecule.prototype.setVelocity = function(vector) {
+        this._velocity = vector;
+        return this;
     };
 
     Molecule.prototype.getRadius = function() {
         return this._radius;
+    };
+
+    Molecule.prototype.advance = function(timeDeltaMillis) {
+        var newx = this._centre.x + this._velocity.x*timeDeltaMillis;
+        var newy = this._centre.y + this._velocity.y*timeDeltaMillis;
+        this.setCentre(new Vector(newx, newy));
+        return this;
     };
 
     Molecule.prototype.collides = function(otherMol) {
@@ -113,17 +183,17 @@ var gases = (function() {
                Math.pow((thisCentre.y - otherCentre.y), 2);
     };
 
-    function randomPoint(xrange, yrange, xoffset, yoffset) {
+    function randomVector(xrange, yrange, xoffset, yoffset) {
         if (typeof(xoffset) !== 'number')
             xoffset = 0;
         if (typeof(yoffset) !== 'number')
             yoffset = 0;
         var x = Math.random() * xrange + xoffset;
         var y = Math.random() * yrange + yoffset;
-        return new Point(x, y);
+        return new Vector(x, y);
     }
 
-    function Point(x, y) {
+    function Vector(x, y) {
         // note x and y properties are non-writeable
         Object.defineProperty(this, 'x',
                               { value: x, enumerable: true });
@@ -131,8 +201,8 @@ var gases = (function() {
                               { value: y, enumerable: true });
     }
 
-    Point.prototype.add = function(otherPt) {
-        return new Point(this.x + otherPt.x, this.y + otherPt.y);
+    Vector.prototype.add = function(otherPt) {
+        return new Vector(this.x + otherPt.x, this.y + otherPt.y);
     };
 
     return {
@@ -140,7 +210,7 @@ var gases = (function() {
         GasBox: GasBox,
 
         exposedforTESTINGONLY: {
-            Point: Point,
+            Vector: Vector,
             Molecule: Molecule,
             MoleculeCollection: MoleculeCollection
         }

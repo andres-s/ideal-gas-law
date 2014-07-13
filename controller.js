@@ -10,7 +10,7 @@ var controller = (function () {
         if (boxModel)
             this._model = boxModel;
         else {
-            this._model = new GasBox(this._htmlElem, 10, 10);
+            this._model = new GasBox(this._htmlElem, 1, 10);
             // extra initialisation maybe?
         }
     }
@@ -23,6 +23,18 @@ var controller = (function () {
             if (i === 0)
                 console.log(highResTimeStamp);
         };
+    };
+
+    BoxController.prototype.advance = function(millisElapsed) {
+        if (!this._millisElapsed) {
+            this._millisElapsed = millisElapsed;
+            return;
+        }
+
+        var delta = millisElapsed - this._millisElapsed;
+        this._millisElapsed = millisElapsed;
+
+        this._model.advance(delta);
     };
 
     BoxController.prototype.getDOMBoxHeight = function() {
