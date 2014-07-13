@@ -1,6 +1,8 @@
 
 var gases = (function() {
 
+    'use strict';
+
     var svgNS = "http://www.w3.org/2000/svg";
 
     function GasBox(htmlElem, numMolecules, moleculeRadius) {
@@ -53,7 +55,7 @@ var gases = (function() {
 
 
     function MoleculeCollection() {
-        this._molecules = [];
+        this._molecules = []; // sparse array, if we delete molecules
         return this;
     }
 
@@ -63,10 +65,19 @@ var gases = (function() {
             if (this._molecules[i].collides(molecule))
                 return false;
         
+
         this._molecules.push(molecule);
         return true;
     };
 
+
+    MoleculeCollection.prototype.getMolecules = function() {
+        var ret = {};
+        this._molecules.forEach(function (elem, idx) {
+            ret[idx] = elem;
+        });
+        return ret;
+    };
 
     function Molecule(x, y, r) {
         r = r || 10; // note this prevents r = 0
@@ -133,7 +144,7 @@ var gases = (function() {
     }
 
     Point.prototype.add = function(otherPt) {
-        return Point(this.x + otherPt.x, this.y + otherPt.y);
+        return new Point(this.x + otherPt.x, this.y + otherPt.y);
     };
 
     return {
