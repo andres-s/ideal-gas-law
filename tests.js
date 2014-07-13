@@ -170,6 +170,32 @@ QUnit.test("getMolecules test", function (assert) {
 });
 
 
+QUnit.module("Collection movement tests", {
+    setup: function() {
+        gasBox = new GasBox(10, 10);
+        collMobile = gasBox._molecules;
+    }
+});
+
+QUnit.test("advance test", function (assert) {
+    mobile1 = new Molecule(5, 5, 1, 1, 0);
+    collMobile.addMolecule(mobile1);
+    collMobile.advance(1);
+    var movedMolecule = collMobile.getMolecules()['0'];
+    mobileMoved = new Molecule(6, 5, 1, 1, 0);
+    testMoleculeEquality(assert, movedMolecule, mobileMoved);    
+});
+
+QUnit.test("advance and bounce test", function (assert) {
+    mobile1 = new Molecule(8, 5, 1, 2, 0);
+    collMobile.addMolecule(mobile1);
+    collMobile.advance(1);
+    var movedMolecule = collMobile.getMolecules()['0'];
+    mobileMoved = new Molecule(8, 5, 1, -2, 0);
+    testMoleculeEquality(assert, movedMolecule, mobileMoved);    
+});
+
+
 /*************************************
  * GasBox Unit Tests
  *************************************/

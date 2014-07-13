@@ -11,6 +11,13 @@ var gases = (function() {
         return gasBox;
     }
 
+    function SimpleGasBox(width, height) {
+        var gasBox = new GasBox(width, height);
+        gasBox._molecules.addMolecule(
+            new Molecule(100, 100, 20, -0.3, -0.3));
+        return gasBox;
+    }
+
     function GasBox(width, height) {
         this._height = height;
         this._width = width;
@@ -119,9 +126,10 @@ var gases = (function() {
     };
 
     MoleculeCollection.prototype.advance = function(timeDeltaMillis) {
-        this._molecules.map(function (mol) {
+        self = this;
+        this._molecules.forEach(function (mol) {
             mol.advance(timeDeltaMillis);
-            this._box.bounce(mol);
+            self._box.bounce(mol);
         });
     };
 
@@ -213,6 +221,7 @@ var gases = (function() {
     return {
 
         GasBox: GasBox,
+        SimpleGasBox: SimpleGasBox,
         RandomGasBox: RandomGasBox,
 
         Vector: Vector,

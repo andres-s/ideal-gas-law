@@ -7,6 +7,7 @@ var controller = (function () {
 
     var GasBox = gases.GasBox;
     var RandomGasBox = gases.RandomGasBox;
+    var SimpleGasBox = gases.SimpleGasBox;
     var Vector = gases.Vector;
 
     function BoxController (boxHTMLElem, boxModel) {
@@ -14,9 +15,11 @@ var controller = (function () {
         if (boxModel)
             this._model = boxModel;
         else {
-            this._model = new RandomGasBox(this._htmlElem.clientWidth, 
-                                           this._htmlElem.clientHeight,
-                                           10, 10);
+            this._model = new SimpleGasBox(this._htmlElem.clientWidth, 
+                                           this._htmlElem.clientHeight);
+            // this._model = new RandomGasBox(this._htmlElem.clientWidth, 
+            //                                this._htmlElem.clientHeight,
+            //                                10, 10);
             // extra initialisation maybe?
         }
         this._circles = new CircleCollection(boxHTMLElem);
@@ -24,20 +27,17 @@ var controller = (function () {
 
     BoxController.prototype.getAnimator = function() {
         var self = this;
-        var i = 0;
         return function(highResTimeStamp) {
-            i = (i + 1) % 20;
-            if (i === 0)
-                console.log(highResTimeStamp);
+            self.advance(highResTimeStamp);
         };
     };
 
     BoxController.prototype.advance = function(millisElapsed) {
         if (this._millisElapsed) {
             var delta = millisElapsed - this._millisElapsed;
-            this._millisElapsed = millisElapsed;
             this._model.advance(delta);
         }
+        this._millisElapsed = millisElapsed;
         var modelState = this._model.getMolecules();
         this._circles.update(modelState);
     };
