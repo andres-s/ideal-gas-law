@@ -3,8 +3,48 @@ var GasBox = gases.GasBox;
 var internalFuncs = gases.exposedforTESTINGONLY;
 var Molecule = internalFuncs.Molecule;
 var MoleculeCollection = internalFuncs.MoleculeCollection;
+var innerProd = internalFuncs.innerProd;
+var _calculatePostCollisionVelocity = internalFuncs._calculatePostCollisionVelocity;
 
 
+
+/*************************************
+ * Vector Unit Tests
+ *************************************/
+QUnit.module("Vector tests", {
+    setup: function() {
+        v1 = new Vector(0,0);
+        v2 = new Vector(1,0);
+        v3 = new Vector(0,-1);
+
+        p1 = new Vector(0, 0);
+        p2 = new Vector(0, 1);
+        p3 = new Vector(1, 0);
+
+        m = 1;
+    }
+});
+
+QUnit.test("innerProd test", function (assert) {
+    assert.strictEqual(innerProd(v1, v2), 0, '');
+    assert.strictEqual(innerProd(v2, v2), 1, '');
+    assert.strictEqual(innerProd(v1, v2), 0, '');
+});
+
+function testVectorEquality(assert, v1, v2) {
+    assert.strictEqual(v1.x, v2.x, 'x bad');
+    assert.strictEqual(v1.y, v2.y, 'y bad');
+}
+
+QUnit.test("Calc post collision test", function (assert) {
+    var calculated = _calculatePostCollisionVelocity(v1, v1, p1, p2, m, m);
+    var expected = new Vector(0, 0);
+    testVectorEquality(assert, calculated, expected);
+
+    calculated = _calculatePostCollisionVelocity(v1, v2, p3, p1, m, m);
+    expected = new Vector(1, 0);
+    testVectorEquality(assert, calculated, expected);
+});
 
 /*************************************
  * Molecule Unit Tests
@@ -61,11 +101,15 @@ QUnit.test('Collision test', function( assert ) {
 QUnit.test("Backtrack to contact test", function (assert) {
     var mol1 = new Molecule(1, 0, 1, 1, 0);
     var mol2 = new Molecule(2, 0, 1, 0, 0);
-    assert.strictEqual(mol1._backtrackToContact(mol2), 1, '');
+    assert.strictEqual(mol1._backtrackToContactWith(mol2), 1, '');
 
     var mol3 = new Molecule(0, 1, 1, 0, 1);
     var mol4 = new Molecule(0, 2, 1, 0, 0);
-    assert.strictEqual(mol3._backtrackToContact(mol4), 1, '');
+    assert.strictEqual(mol3._backtrackToContactWith(mol4), 1, '');
+
+    var mol5 = new Molecule(0.5, 0.5, 1, 1, 1);
+    var mol6 = new Molecule(3, 0, 2, 0, 0);
+    assert.strictEqual(mol5._backtrackToContactWith(mol6), 0.5, '');    
 });
 
 
@@ -122,6 +166,49 @@ QUnit.test("advance test", function (assert) {
     assert.strictEqual(newCentre3.y, 3, 'Molecule.advance bad');
 });
 
+
+function testMoleculeEquality(assert, mol1, mol2, msg) {
+    msg = msg || '';
+    var c1 = mol1.getCentre();
+    var r1 = mol1.getRadius();
+    var v1 = mol1.getVelocity();
+    var c2 = mol2.getCentre();
+    var r2 = mol2.getRadius();
+    var v2 = mol2.getVelocity();
+    assert.strictEqual(c1.x, c2.x, msg + ' x-coord of centre bad');
+    assert.strictEqual(c1.y, c2.y, msg + ' y-coord of centre bad');
+    assert.strictEqual(v1.x, v2.x, msg + ' x-coord of velocity bad');
+    assert.strictEqual(v1.y, v2.y, msg + ' y-coord of velocity bad');
+    assert.strictEqual(r1, r2, msg + ' radius bad');
+}
+
+
+QUnit.module("module collision tests", {
+    setup: function() {
+        mol0 = new Molecule(0, 0, 1, 0, 0);
+        mol1 = new Molecule(0, 0, 1, 1, 0);
+        mol2 = new Molecule(1, 0, 1, 0, 0);
+    }
+});
+
+QUnit.test("static test", function (assert) {
+    var testName = "static test";
+    mol0.collideWith(mol2);
+    var exp0 = new Molecule(0, 0, 1, 0, 0);
+    var exp2 = new Molecule(1, 0, 1, 0, 0);
+    testMoleculeEquality(assert, mol0, exp0, testName);
+    testMoleculeEquality(assert, mol2, exp2, testName);
+});
+
+QUnit.test("x axis test", function (assert) {
+    var testName = 'x axis test';
+    mol1.collideWith(mol2);
+    var exp1 = new Molecule(0, 0, 1, 0, 0);
+    var exp2 = new Molecule(1, 0, 1, 1, 0);
+    testMoleculeEquality(assert, mol1, exp1, testName);
+    testMoleculeEquality(assert, mol2, exp2, testName);
+});
+
 /*************************************
  * MoleculeCollection Unit Tests
  *************************************/
@@ -147,21 +234,6 @@ QUnit.test('Add molecule test', function(assert) {
     var thirdAdd = collEmpty.addMolecule(mol3);
     assert.strictEqual(firstAdd, true, "addMolecule didn't add");
 });
-
-
-function testMoleculeEquality(assert, mol1, mol2) {
-    var c1 = mol1.getCentre();
-    var r1 = mol1.getRadius();
-    var v1 = mol1.getVelocity();
-    var c2 = mol2.getCentre();
-    var r2 = mol2.getRadius();
-    var v2 = mol2.getVelocity();
-    assert.strictEqual(c1.x, c2.x, 'x-coord of centre bad');
-    assert.strictEqual(c1.y, c2.y, 'y-coord of centre bad');
-    assert.strictEqual(v1.x, v2.x, 'x-coord of velocity bad');
-    assert.strictEqual(v1.y, v2.y, 'y-coord of velocity bad');
-    assert.strictEqual(r1, r2, 'radius bad');
-}
 
 QUnit.test("getMolecules test", function (assert) {
     var emptyMolecules = Object.keys(collEmpty.getMolecules());

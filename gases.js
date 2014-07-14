@@ -124,14 +124,77 @@ var gases = (function() {
         return ret;
     };
 
-    MoleculeCollection.prototype.advance = function(timeDeltaMillis) {
-        self = this;
+    MoleculeCollection.prototype.advance0 = function(timeDeltaMillis) {
+        var self = this;
+        this._molecules.forEach(function (mol, idx) {
+            self.advanceMol0(idx, timeDeltaMillis);
+        });
+    };
+
+    MoleculeCollection.prototype.advanceMol0 = function(molId, timeDeltaMillis) {
+        var mol = this._molecules[molId];
+        mol.advance(timeDeltaMillis);
+        this._box.bounce(mol);
+        var collider = this._getCollider(molId);
+        if (collider !== null) {
+            var backtrackTime = mol._backtrackToContactWith(collider);
+            mol.advance(-backtrackTime);
+            mol.collideWith(collider);
+            timeDeltaMillis -= backtrackTime;
+            mol.advance(timeDeltaMillis);
+            this._box.bounce(mol);
+        }
+
+    };
+
+    MoleculeCollection.prototype.advance1 = function(timeDeltaMillis) {
+
+        var self = this;
         this._molecules.forEach(function (mol) {
             mol.advance(timeDeltaMillis);
             self._box.bounce(mol);
         });
+
+        var postCollisionVels = this._molecules.map(function () {
+            return [];
+        });
+
+        this._molecules.forEach(function(mol, i, molcoll) {
+            molcoll.slice(i + 1).forEach(function(othermol, j) {
+
+                if (mol.collides(othermol)) {
+                    
+                    postCollisionVels[i].push(
+                        mol.getPostCollisionVel(othermol)
+                    );
+                    postCollisionVels[j].push(
+                        othermol.getPostCollisionVel(mol)
+                    );
+
+                }
+
+            });
+        });
+
+        var mollarr = this._molecules;
+        postCollisionVels.forEach(function(newVels, idx) {
+            if (newVels.length === 0) 
+                return;
+
+            var avgNewVel = new Vector(0, 0);
+            newVels.forEach(function(v) {
+                avgNewVel = avgNewVel.add(v);
+            });
+            avgNewVel.mult( 1/newVels.length );
+
+            mollarr[idx].setVelocity(avgNewVel);
+        });
+
     };
 
+    MoleculeCollection.prototype.advance = MoleculeCollection.prototype.advance1;
+
+    // Can we do this without molId, ie. compare pointers to Molecule objects?
     MoleculeCollection.prototype._getCollider = function(molOrMolId) {
         var mol, molId;
         if (typeof(molOrMolId) !== 'object') {
@@ -199,6 +262,40 @@ var gases = (function() {
         return this;
     };
 
+    Molecule.prototype.collideWith = function(mol) {
+        var p1 = this.getCentre(),
+            p2 = mol.getCentre(),
+            v1 = this.getVelocity(),
+            v2 = mol.getVelocity();
+        var r1 = this.getRadius();
+        var m1 = r1*r1; // note that we are assuming density is constant
+        var r2 = mol.getRadius();
+        var m2 = r2*r2;
+
+        this.setVelocity(_calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2));
+        mol.setVelocity(_calculatePostCollisionVelocity(v2, v1, p2, p1, m2, m1));
+    };
+
+    Molecule.prototype.getPostCollisionVel = function(mol) {
+        var p1 = this.getCentre(),
+            p2 = mol.getCentre(),
+            v1 = this.getVelocity(),
+            v2 = mol.getVelocity();
+        var r1 = this.getRadius();
+        var m1 = r1*r1; // note that we are assuming density is constant
+        var r2 = mol.getRadius();
+        var m2 = r2*r2;
+
+        return _calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2);
+    };
+
+    // see http://en.wikipedia.org/wiki/Elastic_collision#Two-Dimensional_Collision_With_Two_Moving_Objects
+    function _calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2) {
+        var coeffNum = 2 * m2 * innerProd(v1.subt(v2), p1.subt(p2));
+        var coeffDen = (m1 + m2) * innerProd(p1.subt(p2), p1.subt(p2));
+        return v1.subt( p1.subt(p2) .mult( coeffNum/coeffDen ) );
+    }
+
     Molecule.prototype.collides = function(otherMol) {
         var distanceSquared = this._centreDistSqrd(otherMol);
         var sumRadiusSquared = Math.pow((this.getRadius() + otherMol.getRadius()), 2);
@@ -212,7 +309,7 @@ var gases = (function() {
                Math.pow((thisCentre.y - otherCentre.y), 2);
     };
 
-    Molecule.prototype._backtrackToContact = function(mol) {
+    Molecule.prototype._backtrackToContactWith = function(mol) {
         
         var thisCentre = this.getCentre(),
             molCentre = mol.getCentre(),
@@ -257,10 +354,17 @@ var gases = (function() {
         return new Vector(scalar * this.x, scalar * this.y);
     };
 
-    Vector.prototype.innerProd = function(otherVec) {
-        return this.x*otherVec.x + this.y*otherVec.y;
+    Vector.prototype.subt = function(vec) {
+        return new Vector(this.x - vec.x, this.y - vec.y);
     };
 
+    Vector.prototype.innerProd = function(otherVec) {
+        return innerProd(this, otherVec);
+    };
+
+    function innerProd(v1, v2) {
+        return v1.x*v2.x + v1.y*v2.y;
+    }
 
     return {
 
@@ -272,7 +376,9 @@ var gases = (function() {
 
         exposedforTESTINGONLY: {
             Molecule: Molecule,
-            MoleculeCollection: MoleculeCollection
+            MoleculeCollection: MoleculeCollection,
+            innerProd: innerProd,
+            "_calculatePostCollisionVelocity": _calculatePostCollisionVelocity
         }
 
     };
