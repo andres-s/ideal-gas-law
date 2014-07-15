@@ -68,4 +68,21 @@ function testAttributes(assert, htmlElem, attrs, msg) {
     assert.strictEqual($('circle').length, 1, 'bad num of circles');
     testAttributes(assert, $('circle'), expected, testName);
 
+    coll.update( {'0': new Molecule(32, 11, 1)} );
+    expected = {
+        'cx': '32', 'cy': '11', 'r': '1'  
+    };
+    assert.strictEqual($('circle').length, 1, 'bad num of circles');
+    testAttributes(assert, $('circle'), expected, testName);
+
+    coll.update( {'0': new Molecule(32, 11, 1), '1': new Molecule(2, 3, 4) } );
+    var expected0 = {
+        'cx': '32', 'cy': '11', 'r': '1'  
+    };
+    var expected1 = {
+        'cx': '2', 'cy': '3', 'r': '4'  
+    };
+    assert.strictEqual($('circle').length, 2, 'bad num of circles');
+    testAttributes(assert, $('circle').eq(0), expected0, testName);
+    testAttributes(assert, $('circle').eq(1), expected1, testName);
  });

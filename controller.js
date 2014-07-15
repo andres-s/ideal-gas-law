@@ -64,6 +64,7 @@ var controller = (function () {
         for (var prop in molecules)
             if (Object.hasOwnProperty.call(molecules, prop)) {
                 if (this._circles[prop])
+                    //note we don't update radii
                     this._circles[prop].setCentre( molecules[prop].getCentre() );
                 else {
                     var molCentre = molecules[prop].getCentre();
