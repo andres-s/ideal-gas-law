@@ -34,8 +34,8 @@ QUnit.test("innerProd test", function (assert) {
 
 function testVectorEquality(assert, v1, v2, msg) {
     msg = msg || '';
-    assert.strictEqual(v1.x, v2.x, 'x bad');
-    assert.strictEqual(v1.y, v2.y, 'y bad');
+    assert.strictEqual(v1.x, v2.x, msg + ' x bad');
+    assert.strictEqual(v1.y, v2.y, msg + ' y bad');
 }
 
 QUnit.test("Calc post collision test", function (assert) {
