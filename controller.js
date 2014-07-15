@@ -22,17 +22,14 @@ var controller = (function () {
                                            5, 40);
         }
         this._circles = new CircleCollection(boxHTMLElem);
+        this._circles.update(this._model.getMolecules());
     }
 
-    BoxController.prototype.advance = function(millisElapsed) {
+    BoxController.prototype.advance = function(deltaMillis) {
         this._model.setHeight(this.getDOMBoxHeight());
         this._model.setWidth(this.getDOMBoxWidth());
 
-        if (this._millisElapsed) {
-            var delta = millisElapsed - this._millisElapsed;
-            this._model.advance(delta);
-        }
-        this._millisElapsed = millisElapsed;
+        this._model.advance(deltaMillis);
         var modelState = this._model.getMolecules();
         this._circles.update(modelState);
     };
