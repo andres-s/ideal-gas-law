@@ -17,7 +17,6 @@ html {
 }
 
 #stop-start-button {
-    background-image: linear-gradient(135deg, #723362, #9d223c);
     height: 100px;
     width: 100px;
     margin: auto;
@@ -28,6 +27,18 @@ html {
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.stop-button {
+    background-image: linear-gradient(135deg, #723362, #9d223c);
+}
+
+.start-button {
+    background-image: linear-gradient(135deg, #337259, #2C9D22);
+}
+
+#stop-start-button:hover {
+    cursor: pointer;
 }
 
 #stop-start-button p {
