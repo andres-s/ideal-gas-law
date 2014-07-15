@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Ideal Gases</title>
+    <link rel="stylesheet" type="text/css" href="normalise.css">
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
     <!-- Without the wrapper div the svg element stretches all the way to the
     end of the viewport for some reason -->
     <div id="wrapper">
-    <svg id="box" 
-         version="1.1"
-         baseProfile="full"
-         xmlns="http://www.w3.org/2000/svg"></svg>
+        <div id="control-panel">
+            <p id="stop-start-button">Stop</p>
+        </div>
+        <svg id="box" 
+             version="1.1"
+             baseProfile="full"
+             xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
     <script type="text/javascript" src="gases.js"></script>
     <script type="text/javascript" src="controller.js"></script>
