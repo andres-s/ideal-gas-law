@@ -7,11 +7,9 @@
     var animate = boxController.getAnimator();
 
     function animateWrapper(highResTimeStamp) {
-        animate(highResTimeStamp);
+        boxController.advance(highResTimeStamp);
         window.requestAnimationFrame(animateWrapper);
     }
-
-    // boxController.advance(0);
 
     window.requestAnimationFrame(animateWrapper);
     

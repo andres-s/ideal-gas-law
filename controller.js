@@ -24,13 +24,6 @@ var controller = (function () {
         this._circles = new CircleCollection(boxHTMLElem);
     }
 
-    BoxController.prototype.getAnimator = function() {
-        var self = this;
-        return function(highResTimeStamp) {
-            self.advance(highResTimeStamp);
-        };
-    };
-
     BoxController.prototype.advance = function(millisElapsed) {
         this._model.setHeight(this.getDOMBoxHeight());
         this._model.setWidth(this.getDOMBoxWidth());
