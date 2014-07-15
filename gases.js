@@ -162,7 +162,7 @@ var gases = (function() {
         this._molecules.forEach(function(mol, i, molcoll) {
             molcoll.slice(i + 1).forEach(function(othermol, j) {
 
-                if (mol.collides(othermol)) {
+                if (mol.collides(othermol) && mol.areMovingCloser(othermol)) {
                     
                     postCollisionVels[i].push(
                         mol.getPostCollisionVel(othermol)
@@ -181,11 +181,7 @@ var gases = (function() {
             if (newVels.length === 0) 
                 return;
 
-            var avgNewVel = new Vector(0, 0);
-            newVels.forEach(function(v) {
-                avgNewVel = avgNewVel.add(v);
-            });
-            avgNewVel.mult( 1/newVels.length );
+            var avgNewVel = _avgVec(newVels);
 
             mollarr[idx].setVelocity(avgNewVel);
         });
@@ -328,6 +324,12 @@ var gases = (function() {
         return numerator / (u*u + v*v);
     };
 
+    Molecule.prototype.areMovingCloser = function(mol) {
+        var velDiff = this.getVelocity().subt(mol.getVelocity());
+        var posDiff = this.getCentre().subt(mol.getCentre());
+        return innerProd(velDiff, posDiff) > 0;
+    };
+
     function randomVector(xrange, yrange, xoffset, yoffset) {
         if (typeof(xoffset) !== 'number')
             xoffset = 0;
@@ -366,6 +368,19 @@ var gases = (function() {
         return v1.x*v2.x + v1.y*v2.y;
     }
 
+    function _avgVec(vectorArr) {
+        if (vectorArr.length === 0)
+            return;
+
+        var avg = new Vector(0, 0);
+        vectorArr.forEach(function(v) {
+            avg = avg.add(v);
+        });
+        avg = avg.mult( 1/vectorArr.length );
+
+        return avg;
+    }
+
     return {
 
         GasBox: GasBox,
@@ -378,6 +393,7 @@ var gases = (function() {
             Molecule: Molecule,
             MoleculeCollection: MoleculeCollection,
             innerProd: innerProd,
+            avgVec: _avgVec,
             "_calculatePostCollisionVelocity": _calculatePostCollisionVelocity
         }
 

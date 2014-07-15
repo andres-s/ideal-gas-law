@@ -105,8 +105,11 @@ var controller = (function () {
 
     return {
         
-        BoxController: BoxController
+        BoxController: BoxController,
 
+        exposedforTESTINGONLY: {
+            CircleCollection: CircleCollection
+        }
     };
 
 })();

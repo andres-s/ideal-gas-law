@@ -4,6 +4,7 @@ var internalFuncs = gases.exposedforTESTINGONLY;
 var Molecule = internalFuncs.Molecule;
 var MoleculeCollection = internalFuncs.MoleculeCollection;
 var innerProd = internalFuncs.innerProd;
+var avgVec = internalFuncs.avgVec;
 var _calculatePostCollisionVelocity = internalFuncs._calculatePostCollisionVelocity;
 
 
@@ -31,7 +32,8 @@ QUnit.test("innerProd test", function (assert) {
     assert.strictEqual(innerProd(v1, v2), 0, '');
 });
 
-function testVectorEquality(assert, v1, v2) {
+function testVectorEquality(assert, v1, v2, msg) {
+    msg = msg || '';
     assert.strictEqual(v1.x, v2.x, 'x bad');
     assert.strictEqual(v1.y, v2.y, 'y bad');
 }
@@ -45,6 +47,29 @@ QUnit.test("Calc post collision test", function (assert) {
     expected = new Vector(1, 0);
     testVectorEquality(assert, calculated, expected);
 });
+
+
+QUnit.module("avgVec Tests", {
+    setup: function() {
+        v0 = new Vector(0, 0);
+        v1 = new Vector(1, 0);
+        v2 = new Vector(0, 1);
+        v3 = new Vector(2, 2);
+        v4 = new Vector(-1, 2);
+    }
+});
+
+QUnit.test("avgVec tests", function (assert) {
+    var testName = "avgVec tests";
+    assert.strictEqual(avgVec([]), undefined, 'avg of empty arr is undefined');
+
+    testVectorEquality(assert, avgVec([v0]), v0, testName);
+
+    testVectorEquality(assert, avgVec([v0, v1]), new Vector(0.5, 0), testName);
+
+    testVectorEquality(assert, avgVec([v1, v4]), new Vector(0, 1), testName);    
+});
+
 
 /*************************************
  * Molecule Unit Tests
