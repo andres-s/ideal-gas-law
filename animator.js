@@ -18,10 +18,9 @@ var animator = (function () {
     };
 
     Animator.prototype.realTimeAnimate = function() {
-        this._animationId = window.requestAnimationFrame(this.getStepper());
-    };
 
-    Animator.prototype.getStepper = function() {
+        this._animationId = window.requestAnimationFrame(step);
+
         var self = this;
 
         function step(highResTimeStamp) {
@@ -32,8 +31,6 @@ var animator = (function () {
             self._millisElapsed = highResTimeStamp;
             self._animationId = window.requestAnimationFrame(step);
         }
-
-        return step;
     };
 
     Animator.prototype.stop = function() {
