@@ -76,7 +76,7 @@ var controller = (function () {
         this._svgElem.setAttributeNS(null, "cx", centreVec.x);
         this._svgElem.setAttributeNS(null, "cy", centreVec.y);
         this._svgElem.setAttributeNS(null, "r", r);
-        this._svgElem.setAttributeNS(null, "fill", "black");
+        this._svgElem.setAttributeNS(null, "fill", "#333");
         this._svgElem.setAttributeNS(null, "stroke", "none");
         return this;
     }

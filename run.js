@@ -4,7 +4,6 @@
     var BoxController = controller.BoxController;
 
     var boxController = new BoxController(document.getElementById('box'));
-    var animate = boxController.getAnimator();
 
     function animateWrapper(highResTimeStamp) {
         boxController.advance(highResTimeStamp);
