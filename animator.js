@@ -5,9 +5,8 @@ var animator = (function () {
 
     var BoxController = controller.BoxController;
 
-    function Animator() {
-        this._boxController = (new BoxController(
-                                    document.getElementById('box')));
+    function Animator(htmlElem) {
+        this._boxController = new BoxController(htmlElem);
         this._millisElapsed = null;
         this.realTimeAnimate();
     }
