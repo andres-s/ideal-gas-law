@@ -9,12 +9,16 @@ var animator = (function () {
         this._boxController = (new BoxController(
                                     document.getElementById('box')));
         this._millisElapsed = null;
-        this._animationId = window.requestAnimationFrame(this.getStepper());
+        this.realTimeAnimate();
     }
 
     Animator.prototype.manualAdvance = function(deltaMillis) {
         this.stop();
         this._boxController.advance(deltaMillis);
+    };
+
+    Animator.prototype.realTimeAnimate = function() {
+        this._animationId = window.requestAnimationFrame(this.getStepper());
     };
 
     Animator.prototype.getStepper = function() {
