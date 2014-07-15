@@ -6,7 +6,7 @@ module.exports = function(grunt) {
             all: ['*.js']
         },
         qunit: {
-            all: ['tests.html']
+            all: ['gases_tests.html', 'circleCollection_tests.html']
         }
     });
 

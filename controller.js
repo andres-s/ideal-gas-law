@@ -108,7 +108,8 @@ var controller = (function () {
         BoxController: BoxController,
 
         exposedforTESTINGONLY: {
-            CircleCollection: CircleCollection
+            CircleCollection: CircleCollection,
+            SVGCircle: SVGCircle
         }
     };
 
