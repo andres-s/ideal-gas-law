@@ -17,6 +17,7 @@ html {
 }
 
 #control-panel {
+    background-image: linear-gradient(135deg, #723362, #9d223c);
     height: 100px;
     width: 100px;
     margin: auto;
