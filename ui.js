@@ -28,24 +28,23 @@ var userinterface =  (function () {
     };
 
     function StopStartButton () {
-        this._buttonElem = document.getElementById('stop-start-button');
-        this._labelElem  = this._buttonElem.getElementsByTagName('p')[0];
+        this._labelElem = document.getElementById('stop-start-button');
     }
 
     StopStartButton.prototype.displayStart = function() {
         this._labelElem.innerHTML = 'Start';
-        this._buttonElem.classList.remove(STOP_CLASS);
-        this._buttonElem.classList.add(START_CLASS);
+        this._labelElem.classList.remove(STOP_CLASS);
+        this._labelElem.classList.add(START_CLASS);
     };
 
     StopStartButton.prototype.displayStop = function() {
         this._labelElem.innerHTML = 'Stop';
-        this._buttonElem.classList.remove(START_CLASS);
-        this._buttonElem.classList.add(STOP_CLASS);
+        this._labelElem.classList.remove(START_CLASS);
+        this._labelElem.classList.add(STOP_CLASS);
     };
 
     StopStartButton.prototype.addEventListener = function() {
-        this._buttonElem.addEventListener.apply(this._buttonElem, arguments);
+        this._labelElem.addEventListener.apply(this._buttonElem, arguments);
     };
 
     return {

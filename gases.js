@@ -188,7 +188,7 @@ var gases = (function() {
 
     };
 
-    MoleculeCollection.prototype.advance = MoleculeCollection.prototype.advance1;
+    MoleculeCollection.prototype.advance = MoleculeCollection.prototype.advance0;
 
     // Can we do this without molId, ie. compare pointers to Molecule objects?
     MoleculeCollection.prototype._getCollider = function(molOrMolId) {

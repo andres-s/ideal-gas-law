@@ -16,7 +16,7 @@ html {
     width: 100%;
 }
 
-#stop-start-button {
+#control-panel {
     height: 100px;
     width: 100px;
     margin: auto;
@@ -41,11 +41,13 @@ html {
     cursor: pointer;
 }
 
-#stop-start-button p {
+#stop-start-button {
     color: #fff;
     text-transform: uppercase;
     position: absolute;
-    height: 1rem;
+    border-radius: 10px;
+    padding: 35px 0;
+    width:100px;
     text-align: center;
     margin-top: auto;
     margin-bottom: auto;
