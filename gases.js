@@ -312,15 +312,12 @@ var gases = (function() {
             thisVel = this.getVelocity();
         var r1 = this.getRadius(),
             r2 = mol.getRadius(),
-            x = thisCentre.x,
-            y = thisCentre.y,
-            a = molCentre.x,
-            b = molCentre.y,
+            c = molCentre.x - thisCentre.x,
+            d = molCentre.y - thisCentre.y,
             u = thisVel.x,
             v = thisVel.y,
-            surd = Math.pow((a-x+b-y), 2) + 
-                   (u*u + v*v)*((r1+r2)*(r1+r2) - (a-x)*(a-x) - (b-y)*(b-y)),
-            numerator = x-a+y-b + Math.sqrt(surd);
+            surd = (u*u + v*v)*(r1+r2)*(r1+r2) - Math.pow((u*d - v*c), 2),
+            numerator = (-1)*u*c - v*d + Math.sqrt(surd);
         return numerator / (u*u + v*v);
     };
 
