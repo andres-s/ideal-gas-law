@@ -19,7 +19,7 @@ var controller = (function () {
             //                                this._htmlElem.clientHeight);
             this._model = new RandomGasBox(this._htmlElem.clientWidth, 
                                            this._htmlElem.clientHeight,
-                                           5, 40);
+                                           6, 40);
         }
         this._circles = new CircleCollection(boxHTMLElem);
         this._circles.update(this._model.getMolecules());

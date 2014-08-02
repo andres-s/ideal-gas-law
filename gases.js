@@ -102,7 +102,7 @@ var gases = (function() {
 
     function MoleculeCollection(box) {
         this._box = box;
-        this._molecules = []; // NOT sparse array, if we delete molecules
+        this._molecules = []; // NOT sparse array, unless we delete molecules
         return this;
     }
 
@@ -217,14 +217,16 @@ var gases = (function() {
      * @param {Number} vx x-velocity in pixels/millisecond
      * @param {Number} vy y-velocity in pixels/millisecond
      */
-    function Molecule(x, y, r, vx, vy) {
+    function Molecule(x, y, r, vx, vy, m) {
         r = r || 10; // note this prevents r = 0
         vx = vx || 0;
         vy = vy || 0;
+        m = m || r*r; // note this prevents m = 0
 
         this._centre = new Vector(x, y);
         this._radius = r;
         this._velocity = new Vector(vx, vy);
+        this._mass = m || (this._radius * this._radius);
 
         return this;
     }
@@ -263,10 +265,8 @@ var gases = (function() {
             p2 = mol.getCentre(),
             v1 = this.getVelocity(),
             v2 = mol.getVelocity();
-        var r1 = this.getRadius();
-        var m1 = r1*r1; // note that we are assuming density is constant
-        var r2 = mol.getRadius();
-        var m2 = r2*r2;
+        var m1 = this._mass;
+        var m2 = mol._mass;
 
         this.setVelocity(_calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2));
         mol.setVelocity(_calculatePostCollisionVelocity(v2, v1, p2, p1, m2, m1));
@@ -277,10 +277,8 @@ var gases = (function() {
             p2 = mol.getCentre(),
             v1 = this.getVelocity(),
             v2 = mol.getVelocity();
-        var r1 = this.getRadius();
-        var m1 = r1*r1; // note that we are assuming density is constant
-        var r2 = mol.getRadius();
-        var m2 = r2*r2;
+        var m1 = this._mass;
+        var m2 = mol._mass;
 
         return _calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2);
     };
