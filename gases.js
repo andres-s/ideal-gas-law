@@ -204,7 +204,6 @@ var gases = (function() {
         return null;
     };
 
-
     /**
      * Model of a circular gas molecule
      * @param {Number} x  pixels from left
@@ -222,7 +221,7 @@ var gases = (function() {
         this._centre = new Vector(x, y);
         this._radius = r;
         this._velocity = new Vector(vx, vy);
-        this._mass = m || (this._radius * this._radius);
+        this.mass = m || (this._radius * this._radius);
 
         return this;
     }
@@ -249,6 +248,14 @@ var gases = (function() {
         return this._radius;
     };
 
+    Molecule.prototype.getMomentum = function() {
+        return this.getVelocity().mult(this.mass);
+    };
+
+    Molecule.prototype.getKineticEnergy = function() {
+        return this.getVelocity().magnitudeSqrd() * this.mass / 2;
+    };
+
     Molecule.prototype.advance = function(timeDeltaMillis) {
         var newx = this._centre.x + this._velocity.x*timeDeltaMillis;
         var newy = this._centre.y + this._velocity.y*timeDeltaMillis;
@@ -261,8 +268,8 @@ var gases = (function() {
             p2 = mol.getCentre(),
             v1 = this.getVelocity(),
             v2 = mol.getVelocity();
-        var m1 = this._mass;
-        var m2 = mol._mass;
+        var m1 = this.mass;
+        var m2 = mol.mass;
 
         this.setVelocity(_calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2));
         mol.setVelocity(_calculatePostCollisionVelocity(v2, v1, p2, p1, m2, m1));
@@ -273,8 +280,8 @@ var gases = (function() {
             p2 = mol.getCentre(),
             v1 = this.getVelocity(),
             v2 = mol.getVelocity();
-        var m1 = this._mass;
-        var m2 = mol._mass;
+        var m1 = this.mass;
+        var m2 = mol.mass;
 
         return _calculatePostCollisionVelocity(v1, v2, p1, p2, m1, m2);
     };
@@ -295,8 +302,7 @@ var gases = (function() {
     Molecule.prototype._centreDistSqrd = function(otherMol) {
         var thisCentre = this.getCentre(),
             otherCentre = otherMol.getCentre();
-        return Math.pow((thisCentre.x - otherCentre.x), 2) + 
-               Math.pow((thisCentre.y - otherCentre.y), 2);
+        return thisCentre.subt(otherCentre).magnitudeSqrd();
     };
 
     Molecule.prototype._backtrackToContactWith = function(mol) {
@@ -353,6 +359,10 @@ var gases = (function() {
 
     Vector.prototype.innerProd = function(otherVec) {
         return innerProd(this, otherVec);
+    };
+
+    Vector.prototype.magnitudeSqrd = function() {
+        return this.innerProd(this);
     };
 
     function innerProd(v1, v2) {

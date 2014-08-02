@@ -17,6 +17,7 @@ QUnit.module("Vector tests", {
         v1 = new Vector(0,0);
         v2 = new Vector(1,0);
         v3 = new Vector(0,-1);
+        v4 = new Vector(-0.5, 2);
 
         p1 = new Vector(0, 0);
         p2 = new Vector(0, 1);
@@ -30,6 +31,13 @@ QUnit.test("innerProd test", function (assert) {
     assert.strictEqual(innerProd(v1, v2), 0, '');
     assert.strictEqual(innerProd(v2, v2), 1, '');
     assert.strictEqual(innerProd(v1, v2), 0, '');
+});
+
+QUnit.test("magnitudeSqrd test", function (assert) {
+    assert.strictEqual(v1.magnitudeSqrd(), 0, '');
+    assert.strictEqual(v2.magnitudeSqrd(), 1, '');
+    assert.strictEqual(v3.magnitudeSqrd(), 1, '');
+    assert.strictEqual(v4.magnitudeSqrd(), 4.25, '');
 });
 
 function testVectorEquality(assert, v1, v2, msg) {
