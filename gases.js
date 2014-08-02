@@ -7,7 +7,23 @@ var gases = (function() {
 
     function RandomGasBox(width, height, numMolecules, moleculeRadius) {
         var gasBox = new GasBox(width, height);
-        gasBox._initialise(numMolecules, moleculeRadius);
+        
+        var heightRange = height - 2*moleculeRadius;
+        var widthRange  = width - 2*moleculeRadius;
+        
+        for (var i = 0; i < numMolecules; i++) {
+
+            var pos = randomVector(widthRange, heightRange, moleculeRadius, moleculeRadius);
+            var vel = randomVector(-0.7, -0.7, 0, 0);
+            var mol = new Molecule(pos.x, pos.y, moleculeRadius, vel.x, vel.y);
+
+            while ( ! gasBox._molecules.addMolecule(mol) ) {
+                mol.setCentre(
+                    randomVector(widthRange, heightRange, 
+                                moleculeRadius, moleculeRadius));
+            }
+        }
+
         return gasBox;
     }
 
@@ -77,26 +93,6 @@ var gases = (function() {
 
     GasBox.prototype.getMolecules = function() {
         return this._molecules.getMolecules();
-    };
-
-    GasBox.prototype._initialise = function(numMolecules, moleculeRadius) {
-
-        var heightRange = this.height() - 2*moleculeRadius;
-        var widthRange  = this.width() - 2*moleculeRadius;
-        
-        for (var i = 0; i < numMolecules; i++) {
-
-            var pos = randomVector(widthRange, heightRange, moleculeRadius, moleculeRadius);
-            var vel = randomVector(-0.7, -0.7, 0, 0);
-            var mol = new Molecule(pos.x, pos.y, moleculeRadius, vel.x, vel.y);
-
-            while ( ! this._molecules.addMolecule(mol) ) {
-                mol.setCentre(
-                    randomVector(widthRange, heightRange, 
-                                moleculeRadius, moleculeRadius));
-            }
-        }
-
     };
 
 
