@@ -195,16 +195,19 @@ QUnit.test("advance test", function (assert) {
 function testMoleculeEquality(assert, mol1, mol2, msg) {
     msg = msg || '';
     var c1 = mol1.getCentre();
-    var r1 = mol1.getRadius();
+    var r1 = mol1.getRadius(),
+        m1 = mol1.mass;
     var v1 = mol1.getVelocity();
     var c2 = mol2.getCentre();
-    var r2 = mol2.getRadius();
+    var r2 = mol2.getRadius(),
+        m2 = mol2.mass;
     var v2 = mol2.getVelocity();
     assert.strictEqual(c1.x, c2.x, msg + ' x-coord of centre bad');
     assert.strictEqual(c1.y, c2.y, msg + ' y-coord of centre bad');
     assert.strictEqual(v1.x, v2.x, msg + ' x-coord of velocity bad');
     assert.strictEqual(v1.y, v2.y, msg + ' y-coord of velocity bad');
     assert.strictEqual(r1, r2, msg + ' radius bad');
+    assert.strictEqual(m1, m2, msg + ' mass bad');
 }
 
 
