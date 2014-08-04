@@ -365,7 +365,5 @@ QUnit.test("bounce test", function (assert) {
     box.bounce(mol4);
     expected = new Molecule(5, 8.5, 1, 0, -1);
     testMoleculeEquality(assert, mol4, expected);
-});
-
-
+})
 
