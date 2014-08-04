@@ -154,6 +154,28 @@ QUnit.module('Molecule movement tests', {
     }
 });
 
+
+QUnit.test("Molecule getMomentum tests", function (assert) {
+    var expected = new Vector(0, 0);
+    testVectorEquality(assert, mol1.getMomentum(), expected, 'momentum bad');
+
+    mol2.mass = 10;
+    expected = new Vector(-20, 15);
+    testVectorEquality(assert, mol2.getMomentum(), expected, 'momentum bad');
+
+    mol3.mass = 1;
+    expected = new Vector(-10, -20);
+    testVectorEquality(assert, mol3.getMomentum(), expected, 'momentum bad');
+});
+
+QUnit.test("Molecule getKineticEnergy test", function (assert) {
+    assert.strictEqual(mol1.getKineticEnergy(), 0, 'bad kineticEnergy');
+    mol2.mass = 2;
+    assert.strictEqual(mol2.getKineticEnergy(), 6.25, 'bad kineticEnergy');
+    mol3.mass = 1;
+    assert.strictEqual(mol3.getKineticEnergy(), 250, 'bad kineticEnergy');
+});
+
 QUnit.test("velocity get/set", function (assert) {
     assert.strictEqual(mol1.getVelocity().x, 0,
                        'Molecule constructor/getVelocity bad');
@@ -365,5 +387,5 @@ QUnit.test("bounce test", function (assert) {
     box.bounce(mol4);
     expected = new Molecule(5, 8.5, 1, 0, -1);
     testMoleculeEquality(assert, mol4, expected);
-})
+});
 
