@@ -1,7 +1,7 @@
 Ideal gas law
 =============
 
-Toy implementation of gas molecules bouncing around in a box in your browser.
+Toy implementation of gas molecules bouncing around in a box in your browser. Occasionally molecules will 'jump', which is likely an artefact of me not knowing how to easily create test cases for numerical algorithms when originally writing the code (if you're wondering, just use spreadsheets).
 
 To install `npm` dependencies:
 ```bash
