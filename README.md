@@ -3,6 +3,11 @@ Ideal gas law
 
 Toy implementation of gas molecules bouncing around in a box in your browser.
 
+To install `npm` dependencies:
+```bash
+npm install
+```
+
 To run tests:
 ```bash
 $ grunt qunit
