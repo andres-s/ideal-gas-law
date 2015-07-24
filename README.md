@@ -5,7 +5,7 @@ Toy implementation of gas molecules bouncing around in a box in your browser.
 
 To install `npm` dependencies:
 ```bash
-npm install
+$ npm install
 ```
 
 To run tests:
